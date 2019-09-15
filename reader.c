@@ -34,20 +34,19 @@ reader_t reader_create(int fd){
 }
 
 char reader_next(reader_t reader){
-	char c = reader->buffer;
 	//condition for if the index is one less than the end, or at the end
-	if(f (reader->index == reader->size || reader->index + 1 == reader->size))
+	if(reader->index == reader->size || reader->index + 1 == reader->size)
 	{
 		//reset the index, get the size, return next character buffer or EOF 
 		reader->index = 0;
-		reader->size = read(reader->fd, &c, 512);
-		return reader->size != 0 ? c[0] : EOF;
+		reader->size = read(reader->fd, &(reader->buffer), 512);
+		return reader->size != 0 ? reader->buffer[0] : EOF;
 	}
 	else
 	{
 		//increment index, return next character
-		reader->index = reader_index + 1;
-		return c[reader->index];
+		reader->index = reader->index + 1;
+		return reader->buffer[reader->index];
 	}
 }
 

@@ -221,7 +221,6 @@ static void spawn(command_t command, int background){
 		else
 		{
 			wait_pid = wait(&child_status);
-			if wait_pid
 			while (wait_pid != child_pid)
 			{
 				if (WIFSIGNALED(child_status) != 0)

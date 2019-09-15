@@ -209,13 +209,13 @@ static void spawn(command_t command, int background){
 				printf("process %d is finished executing \n", wait_pid);
 				if (WIFSIGNALED(child_status) != 0)
 				{
-					signal_child = WTERMSIG(child_status);
+					int signal_child = WTERMSIG(child_status);
 					printf("process %d terminated with signal %d\n", child_status, signal_child);
 
 				}
 				else if (WIFEXITED(child_status) != 0)
 				{
-					status_child = WEXITSTATUS(child_status);
+					int status_child = WEXITSTATUS(child_status);
 					printf("process %d terminated with status %d\n", child_status, status_child);
 				}
 				wait_pid = wait(&child_status);

@@ -182,7 +182,7 @@ static void spawn(command_t command, int background){
 	if (child_pid == -1)
 	{
 		fprintf(stderr, "unable to spawn file\n");
-		return
+		return;
 	}
 
 
@@ -273,25 +273,24 @@ static void source(command_t command){
 
 	for (i = 1; command->argv[i] != 0; i++) {
 		char *file = command->argv[i];
-	}
 // BEGIN
-	int fd;
-	fd = open(file, O_RDONLY);
-	if (fd == -1) 
-	{
-		fprintf(stderr, "unable to open file\n");
-		return
+		int fd;
+		fd = open(file, O_RDONLY);
+		if (fd == -1) 
+		{
+			fprintf(stderr, "unable to open file\n");
+			return;
+		}
+		reader_t reader = reader_create(fd);
+	    interpret(reader, 0);
+	    reader_free(reader);
+	    int close_result = close(fd);
+	    if (close_result == -1)
+	    {
+	    	fprintf(stderr, "unable to close file\n");
+	    	return;
+	    }
 	}
-	reader_t reader = reader_create(fd);
-    interpret(reader, 0);
-    reader_free(reader);
-    int close_result = close(fd);
-    if (close_result == -1)
-    {
-    	fprintf(stderr, "unable to close file\n");
-    	return
-    }
-
 // END
 }
 

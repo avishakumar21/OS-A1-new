@@ -78,7 +78,6 @@ static void redir_file(char *name, int fd, int flags){
 
 	mode_t mode_create = 0644;
 	int fd2;
-	int redir_result;
 	fd2 = open(name, flags, mode_create);
 	redir_fd(fd, fd2);
 	close(fd2);
@@ -178,7 +177,8 @@ static void spawn(command_t command, int background){
 	pid_t wait_pid;
 
 	pid_t child_pid = fork();
-	if (child_pid == -1){
+	if (child_pid == -1)
+	{
 		fprintf(stderr, "unable to spawn file\n");
 		return
 	}
@@ -207,13 +207,13 @@ static void spawn(command_t command, int background){
 				printf("process %d is finished executing \n", wait_pid);
 				if (WIFSIGNALED(child_status) != 0)
 				{
-					signal_child = WTERMSIG(child_status);
+					int signal_child = WTERMSIG(child_status);
 					printf("process %d terminated with signal %d\n", child_status, signal_child);
 
 				}
 				else if (WIFEXITED(child_status) != 0)
 				{
-					status_child = WEXITSTATUS(child_status);
+					int status_child = WEXITSTATUS(child_status);
 					printf("process %d terminated with status %d\n", child_status, status_child);
 				}
 				wait_pid = wait(&child_status);
@@ -246,7 +246,7 @@ static void cd(command_t command){
 	char *dir = command->argv[1];
 // BEGIN
 	int change_dir_result;
-	if (dir == null)
+	if (dir == NULL)
 	{
 		change_dir_result = chdir(getenv(HOME));
 	}
@@ -271,6 +271,7 @@ static void source(command_t command){
 
 	for (i = 1; command->argv[i] != 0; i++) {
 		char *file = command->argv[i];
+	}
 // BEGIN
 	printf("SOURCE FROM %s\n", file);	// replace this line
 	int fd;
@@ -283,7 +284,7 @@ static void source(command_t command){
 	reader_t reader = reader_create(fd);
     interpret(reader, 0);
     reader_free(reader);
-    close_result = close(fd);
+    int close_result = close(fd);
     if (close_result == -1)
     {
     	fprintf(stderr, "unable to close file\n");

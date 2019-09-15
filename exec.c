@@ -250,7 +250,7 @@ static void cd(command_t command){
 	int change_dir_result;
 	if (dir == NULL)
 	{
-		change_dir_result = chdir(getenv(HOME));
+		change_dir_result = chdir(getenv("HOME"));
 	}
 	else
 	{

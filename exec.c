@@ -78,7 +78,6 @@ static void redir_file(char *name, int fd, int flags){
 
 	mode_t mode_create = 0644;
 	int fd2;
-	int redir_result;
 	fd2 = open(name, flags, mode_create);
 	redir_fd(fd, fd2);
 	close(fd2);
@@ -175,10 +174,13 @@ static void spawn(command_t command, int background){
 	printf("RUN %s\n", command->argv[0]);	// replace this line
 
 	int child_status; 
+	int status_child;
+	int signal_child;
 	pid_t wait_pid;
 
 	pid_t child_pid = fork();
-	if (child_pid == -1){
+	if (child_pid == -1)
+	{
 		fprintf(stderr, "unable to spawn file\n");
 		return
 	}
@@ -246,7 +248,7 @@ static void cd(command_t command){
 	char *dir = command->argv[1];
 // BEGIN
 	int change_dir_result;
-	if (dir == null)
+	if (dir == NULL)
 	{
 		change_dir_result = chdir(getenv(HOME));
 	}
@@ -271,11 +273,11 @@ static void source(command_t command){
 
 	for (i = 1; command->argv[i] != 0; i++) {
 		char *file = command->argv[i];
+	}
 // BEGIN
-	printf("SOURCE FROM %s\n", file);	// replace this line
 	int fd;
 	fd = open(file, O_RDONLY);
-	if (fd == -1)
+	if (fd == -1) 
 	{
 		fprintf(stderr, "unable to open file\n");
 		return
@@ -283,7 +285,7 @@ static void source(command_t command){
 	reader_t reader = reader_create(fd);
     interpret(reader, 0);
     reader_free(reader);
-    close_result = close(fd);
+    int close_result = close(fd);
     if (close_result == -1)
     {
     	fprintf(stderr, "unable to close file\n");
@@ -291,8 +293,8 @@ static void source(command_t command){
     }
 
 // END
-	}
 }
+
 
 /* Exit the shall.
  */

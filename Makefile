@@ -1,4 +1,4 @@
-CFLAGS = -g -Wall -std=c99
+CFLAGS = -g -Wall
 OBJECTS = shall.o exec.o reader.o token.o parser.o
 
 shall: $(OBJECTS)

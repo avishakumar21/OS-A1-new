@@ -215,7 +215,7 @@ static void spawn(command_t command, int background){
 		//parent process does not do anything if child process needs to run in the background
 		if (background)
 		{
-			printf("process %d running in background", child_pid);
+			printf("process %d running in background\n", child_pid);
 		}
 		//parent waits for foreground processes to finish before executing its own foreground process
 		else

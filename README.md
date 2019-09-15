@@ -20,7 +20,7 @@ The shell syntax resembles that of the original Bourne shell or bash:
 		destroying the original contents of exec.out if it already
 		existed.
 
-	case exec.c >> exec.out
+	cat exec.c >> exec.out
 		execute 'cat exec.c' but append output to file exec.out.
 
 	cat exec.c {2}> exec.err
@@ -38,7 +38,7 @@ The shell syntax resembles that of the original Bourne shell or bash:
 		file exec.c.
 
 	cat exec.c > exec.err {2}>{1}
-		write both standard input and standard output to file exec.err.
+		write both standard output and standard error to file exec.err.
 		In the standard shell, the command is 'cat exec.c > exec.err 2>&1'.
 
 	cat exec.c &

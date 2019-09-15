@@ -21,7 +21,7 @@ struct reader {
 	int fd;
 	char buffer[512];
 	int size;
-	int index;
+	int index; 
 
 };
 
@@ -34,12 +34,14 @@ reader_t reader_create(int fd){
 }
 
 char reader_next(reader_t reader){
-	//condition for if the index is one less than the end, or at the end
-	if(reader->index == reader->size || reader->index + 1 == reader->size)
+	//condition for if the index is one less than the size, or the size
+	if(reader->index == reader->size || reader->index == reader->size - 1)
 	{
 		//reset the index, get the size, return next character buffer or EOF 
 		reader->index = 0;
 		reader->size = read(reader->fd, &(reader->buffer), 512);
+		//return first char of buffer if size is not zero
+		//return EOF if size is zero
 		return reader->size != 0 ? reader->buffer[0] : EOF;
 	}
 	else

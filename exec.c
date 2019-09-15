@@ -58,8 +58,9 @@ void interrupts_catch(){
  */
 static void redir_fd(int fd1, int fd2){
 // BEGIN
-
+		//redirect the file and hold the result 
 		int redir_result = dup2(fd2, fd1);
+		//error and exit if redirect is unsuccessful 
 		if (redir_result == -1)
 		{
 			fprintf(stderr, "unable to redirect f1 to f2\n");
@@ -78,7 +79,16 @@ static void redir_file(char *name, int fd, int flags){
 
 	mode_t mode_create = 0644;
 	int fd2;
+	//create and open the file 
 	fd2 = open(name, flags, mode_create);
+	//if open is unsuccessful, error and exit 
+	if (fd2 == -1)
+	{
+		fprintf(stderr, "unable to open file 'name'\n");
+		_exit(1);
+
+	}
+	//call the redirect helper function and close the opened file
 	redir_fd(fd, fd2);
 	close(fd2);
 
@@ -171,42 +181,49 @@ static void execute(command_t command){
  */
 static void spawn(command_t command, int background){
 // BEGIN
-	printf("RUN %s\n", command->argv[0]);	// replace this line
 
+	//initialize variables 
 	int child_status; 
 	int status_child;
 	int signal_child;
 	pid_t wait_pid;
 
+	//fork a child to execute process 
 	pid_t child_pid = fork();
+	//ensure fork happened correctly 
 	if (child_pid == -1)
 	{
 		fprintf(stderr, "unable to spawn file\n");
 		return;
 	}
 
-
+	//if the process id is child 
 	if (!child_pid)
 	{
+		//if the process supposed to run the background, disable interrupts
 		if (background)
 		{
 			interrupts_disable();
 		}
+		//execute command for background and foreground
 		redir(command);
 		execute(command);
 	}
+	//if the process id is parent
 	else
 	{
+		//parent process does not do anything if child process needs to run in the background
 		if (background)
 		{
 			printf("process %d running in background", child_pid);
 		}
+		//parent waits for foreground processes to finish before executing its own foreground process
 		else
 		{
 			wait_pid = wait(&child_status);
+			if wait_pid
 			while (wait_pid != child_pid)
 			{
-				printf("process %d is finished executing \n", wait_pid);
 				if (WIFSIGNALED(child_status) != 0)
 				{
 					int signal_child = WTERMSIG(child_status);
@@ -221,6 +238,7 @@ static void spawn(command_t command, int background){
 				wait_pid = wait(&child_status);
 			}
 			//check one more time for the child - you only get child once you break out of while loop
+
 			if (WIFSIGNALED(child_status) != 0)
 			{
 				signal_child = WTERMSIG(child_status);
@@ -229,8 +247,11 @@ static void spawn(command_t command, int background){
 			}
 			else if (WIFEXITED(child_status) != 0)
 			{
-				status_child = WEXITSTATUS(child_status);
-				printf("process %d terminated with status %d\n", child_status, status_child);
+				if (WEXITSTATUS(child_status) != 0)
+				{
+					status_child = WEXITSTATUS(child_status);
+					printf("process %d terminated with status %d\n", child_status, status_child);
+				}
 			}
 		}
 	}
@@ -247,6 +268,7 @@ static void cd(command_t command){
 	}
 	char *dir = command->argv[1];
 // BEGIN
+	//check to see if directory exists and default to home if not
 	int change_dir_result;
 	if (dir == NULL)
 	{
@@ -257,11 +279,11 @@ static void cd(command_t command){
 		change_dir_result = chdir(dir);
 
 	}
+	//error check for using the change directory command
 	if (change_dir_result < 0)
 	{
 		fprintf(stderr, "unable to change directory\n");
 	}
-	//printf("CHDIR TO %s\n", dir == 0 ? "<home>" : dir);	// replace this line
 // END
 }
 
@@ -274,17 +296,21 @@ static void source(command_t command){
 	for (i = 1; command->argv[i] != 0; i++) {
 		char *file = command->argv[i];
 // BEGIN
+		//open with the read only flag 
 		int fd;
 		fd = open(file, O_RDONLY);
+		//error check for open 
 		if (fd == -1) 
 		{
 			fprintf(stderr, "unable to open file\n");
 			return;
 		}
+		//reader code 
 		reader_t reader = reader_create(fd);
 	    interpret(reader, 0);
 	    reader_free(reader);
 	    int close_result = close(fd);
+	  	//error check for close
 	    if (close_result == -1)
 	    {
 	    	fprintf(stderr, "unable to close file\n");

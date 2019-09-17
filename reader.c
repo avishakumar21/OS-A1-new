@@ -35,7 +35,7 @@ reader_t reader_create(int fd){
 
 char reader_next(reader_t reader){
 	//condition for if the index is one less than the size, or the size
-	if(reader->index == reader->size || reader->index == reader->size - 1) //change this so that it only checks size
+	if(reader->index == reader->size)
 	{
 		//reset the index, get the size, return next character buffer or EOF 
 		reader->index = 0;
